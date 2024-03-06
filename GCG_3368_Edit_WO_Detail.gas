@@ -1,0 +1,65 @@
+Program.Sub.ScreenSU.Start
+Program.Sub.ScreenSU.End
+
+Program.Sub.Preflight.Start
+
+Program.Sub.Preflight.End
+
+Program.Sub.Main.Start
+F.Intrinsic.Control.SetErrorHandler("Main_Err")
+F.Intrinsic.Control.ClearErrors
+
+'Quote 4626
+'Customer: Hellebusch Tool and Die
+'Hooks: 15710, 15750, 15760
+'Eric M.
+
+V.Local.sError.Declare(String)
+V.Local.sDate.Declare(String)
+V.Local.sEmployeeNum.Declare(String)
+V.Local.sParam.Declare(String)
+V.Local.sTime.Declare(String)
+V.Local.lTime.Declare(Long)
+
+
+
+F.Intrinsic.Control.If(V.Caller.Hook,=,15710)
+	V.Passed.000016.Set("Edit WO Dtl")
+	F.Intrinsic.Control.End
+F.Intrinsic.Control.EndIf
+
+V.Local.sEmployeeNum.Set(V.Passed.009993)
+F.Intrinsic.Control.If(V.Local.sEmployeeNum.Trim,=,"")
+	F.Intrinsic.UI.Msgbox("Please select a ACTIVE employee.")
+	F.Intrinsic.Control.End
+F.Intrinsic.Control.EndIf
+
+Function.Intrinsic.String.TimeString(Variable.ambient.now,Variable.local.sTime)
+F.Intrinsic.math.ConvertToLong(V.Local.sTime,V.Local.lTime)
+F.Intrinsic.Control.If(V.Local.sTime,<=,0659)
+	F.Intrinsic.date.DateAdd("D",-1,V.Ambient.Date,V.Local.sDate)
+F.Intrinsic.Control.Else
+	V.Local.sDate.Set(V.Ambient.Date)
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.String.Format(V.Local.sDate,"MMDDYY",V.local.sDate)
+
+F.Intrinsic.String.Concat(V.Local.sDate,"!*!",V.Local.sEmployeeNum,V.Local.sParam)
+'displays screen SFC > Trnas > Edit WO Detail (No Dollars)
+F.Global.General.CallWrapperSync(2008,V.Local.sParam)
+
+F.Intrinsic.Control.Label("Main_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_Edit_WO_Detail.gas",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.End
+Function.Intrinsic.Control.EndIf
+
+
+Program.Sub.Main.End
+
+Program.Sub.Comments.Start
+${$0$}$GCG_Edit_WO_Detail$}$ERIC$}$7/8/2013
+${$3$}$0$}$$}$-1$}$-1$}$$}$1/1/1900$}$'Quote 4626
+Program.Sub.Comments.End
+
